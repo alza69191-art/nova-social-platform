@@ -12,7 +12,7 @@ export default async function FeedPage() {
   const { data: profiles } = authorIds.length
     ? await supabase.from("profiles").select("id, display_name, username, avatar_url").in("id", authorIds)
     : { data: [] };
-  const profileById = new Map((profiles ?? []).map((profile) => [profile.id, profile]));
+  const profileById = new Map((profiles ?? []).map((profile) => [profile.id, profile] as const));
   const initialPosts = (rows ?? []).map((post) => ({
     id: post.id,
     content: post.content,
