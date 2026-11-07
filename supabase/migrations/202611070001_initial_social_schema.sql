@@ -25,6 +25,33 @@ create table if not exists public.follows (
   constraint follows_no_self check (follower_id <> following_id)
 );
 
+create or replace function public.assign_follow_status()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $
+declare
+  target_is_private boolean;
+begin
+  select p.is_private into target_is_private
+  from public.profiles p
+  where p.id = new.following_id;
+
+  if target_is_private is null then
+    raise exception 'Target profile does not exist';
+  end if;
+
+  new.status := case when target_is_private then 'pending' else 'accepted' end;
+  return new;
+end;
+$;
+
+drop trigger if exists follows_assign_status on public.follows;
+create trigger follows_assign_status
+before insert on public.follows
+for each row execute procedure public.assign_follow_status();
+
 create table if not exists public.posts (
   id uuid primary key default gen_random_uuid(),
   author_id uuid not null references public.profiles(id) on delete cascade,
@@ -229,16 +256,22 @@ using (
     where p.id = comments.post_id
       and (
         p.author_id = (select auth.uid())
-        or (p.visibility = 'public' and exists (
-          select 1 from public.profiles pr where pr.id = p.author_id and pr.is_private = false
-        ))
-        or (p.visibility = 'followers' and exists (
-          select 1 from public.follows f where f.follower_id = (select auth.uid())
-            and f.following_id = p.author_id and f.status = 'accepted'
-        ))
-        or exists (
-          select 1 from public.follows f where f.follower_id = (select auth.uid())
-            and f.following_id = p.author_id and f.status = 'accepted'
+        or (
+          p.visibility = 'public'
+          and (
+            exists (select 1 from public.profiles pr where pr.id = p.author_id and pr.is_private = false)
+            or exists (
+              select 1 from public.follows f where f.follower_id = (select auth.uid())
+                and f.following_id = p.author_id and f.status = 'accepted'
+            )
+          )
+        )
+        or (
+          p.visibility = 'followers'
+          and exists (
+            select 1 from public.follows f where f.follower_id = (select auth.uid())
+              and f.following_id = p.author_id and f.status = 'accepted'
+          )
         )
       )
   )
@@ -254,10 +287,22 @@ with check (
     where p.id = comments.post_id
       and (
         p.author_id = (select auth.uid())
-        or p.visibility = 'public'
-        or exists (
-          select 1 from public.follows f where f.follower_id = (select auth.uid())
-            and f.following_id = p.author_id and f.status = 'accepted'
+        or (
+          p.visibility = 'public'
+          and (
+            exists (select 1 from public.profiles pr where pr.id = p.author_id and pr.is_private = false)
+            or exists (
+              select 1 from public.follows f where f.follower_id = (select auth.uid())
+                and f.following_id = p.author_id and f.status = 'accepted'
+            )
+          )
+        )
+        or (
+          p.visibility = 'followers'
+          and exists (
+            select 1 from public.follows f where f.follower_id = (select auth.uid())
+              and f.following_id = p.author_id and f.status = 'accepted'
+          )
         )
       )
   )
@@ -278,10 +323,22 @@ using (
     where p.id = reactions.post_id
       and (
         p.author_id = (select auth.uid())
-        or p.visibility = 'public'
-        or exists (
-          select 1 from public.follows f where f.follower_id = (select auth.uid())
-            and f.following_id = p.author_id and f.status = 'accepted'
+        or (
+          p.visibility = 'public'
+          and (
+            exists (select 1 from public.profiles pr where pr.id = p.author_id and pr.is_private = false)
+            or exists (
+              select 1 from public.follows f where f.follower_id = (select auth.uid())
+                and f.following_id = p.author_id and f.status = 'accepted'
+            )
+          )
+        )
+        or (
+          p.visibility = 'followers'
+          and exists (
+            select 1 from public.follows f where f.follower_id = (select auth.uid())
+              and f.following_id = p.author_id and f.status = 'accepted'
+          )
         )
       )
   )
@@ -297,10 +354,22 @@ with check (
     where p.id = reactions.post_id
       and (
         p.author_id = (select auth.uid())
-        or p.visibility = 'public'
-        or exists (
-          select 1 from public.follows f where f.follower_id = (select auth.uid())
-            and f.following_id = p.author_id and f.status = 'accepted'
+        or (
+          p.visibility = 'public'
+          and (
+            exists (select 1 from public.profiles pr where pr.id = p.author_id and pr.is_private = false)
+            or exists (
+              select 1 from public.follows f where f.follower_id = (select auth.uid())
+                and f.following_id = p.author_id and f.status = 'accepted'
+            )
+          )
+        )
+        or (
+          p.visibility = 'followers'
+          and exists (
+            select 1 from public.follows f where f.follower_id = (select auth.uid())
+              and f.following_id = p.author_id and f.status = 'accepted'
+          )
         )
       )
   )
