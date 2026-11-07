@@ -44,6 +44,10 @@ Build an original product experience inspired by familiar social-platform workfl
 
 Render is configured through [render.yaml](render.yaml). Create a Render Web Service from this repository and provide the Supabase environment variables in the Render dashboard. Never commit real secrets.
 
+## Company formation pack
+
+- [Company formation pack and registration checklist](company-pack/README.md)
+
 ## Project documents
 
 - [Product scope](docs/PRODUCT_SCOPE.md)
