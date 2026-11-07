@@ -1,59 +1,44 @@
 # NOVA Social Platform
 
-NOVA is a unified social platform for publishing, video and creator channels, communities, messaging, marketplaces, and user-controlled privacy.
+NOVA is an original Arabic-first social platform project for publishing, video, messaging, communities, creator channels, discovery, and digital marketplaces.
 
 ## Technology
-
 - Next.js 15.5.29, React 19, and TypeScript.
 - Render Web Service for application hosting.
 - Supabase Auth, PostgreSQL with Row Level Security, Storage, and Realtime.
 - GitHub Actions for type-check, lint, and production-build verification.
 
-## Product direction
+## Product modules
+- Identity: signup, login, profiles, privacy, sessions, and account controls.
+- Social: feed, posts, stories, comments, reactions, sharing, polls, and follows.
+- Video: creator channels, publishing, playlists, and future live streaming.
+- Communication: direct/group messages, attachments, and notifications.
+- Communities: groups, pages, memberships, moderation, and events.
+- Marketplace: products, digital goods, services, and later auctions/payments.
+- Safety: reporting, blocking, moderation, rate limits, audit trails, and account security.
+- Discovery: search, topics, recommendations, and optional AI tools.
 
-Build an original product experience inspired by familiar social-platform workflows. NOVA has its own identity, interface, implementation, and policies; it is not presented as an official integration or merger of other platforms.
+## Current implementation
+- Arabic RTL landing page and responsive styling.
+- Supabase SSR signup/login, auth callback, and protected feed.
+- Initial social schema and RLS for profiles, follows, posts, comments, and reactions.
+- Expanded schema for stories, conversations, messages, groups, channels, videos, listings, notifications, reports, and blocks.
+- Authenticated feed with text-post publishing and audience selection.
 
-## Core areas
+The expanded database migration is a foundation, not a claim that every module is production-ready. Messaging, uploads, moderation workflows, live video, payments, auctions, and AI integrations require separate implementation, provider setup, tests, and security review.
 
-- Social feed: posts, media, comments, replies, reactions, sharing, stories, and polls.
-- Video and creator channels: public channels, video publishing, and creator profiles.
-- Messaging: conversations, attachments, typing/read indicators, and configurable disappearing messages.
-- Communities: groups, public/private pages, events, memberships, and moderation.
-- Marketplace: listings, digital goods, auctions, and seller profiles.
-- Trust and safety: reporting, blocking, moderation tools, rate limits, session controls, and account security.
-- Personalization: notifications, follows, friends, badges, points, and accessibility settings.
-- Optional AI assistance for discovery, creation, and moderation, subject to privacy controls.
-
-## Product principles
-
-1. Privacy and user control are first-class requirements.
-2. Security-sensitive features must be implemented and tested, not represented by UI placeholders.
-3. Ship in small, verifiable milestones; do not claim unfinished capabilities as complete.
-4. Build a responsive, localization-ready experience with Arabic as a primary interface language.
-5. Use original branding and avoid copying protected assets or proprietary interface elements.
-
-## Getting started
-
-1. Copy .env.example to .env.local.
-2. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.
+## Setup
+1. Copy the example environment file to your local environment file.
+2. Set the Supabase project URL and publishable key.
 3. Install dependencies with npm install.
-4. Start the app with npm run dev.
-5. Apply the SQL migration in supabase/migrations/ to the Supabase project before using social data features.
+4. Apply migrations in supabase/migrations in filename order.
+5. Start with npm run dev.
 
 ## Deployment
+Render is configured through render.yaml. Add Supabase environment variables in the Render dashboard. Never commit real secrets.
 
-Render is configured through [render.yaml](render.yaml). Create a Render Web Service from this repository and provide the Supabase environment variables in the Render dashboard. Never commit real secrets.
-
-## Company formation pack
-
-- [Company formation pack and registration checklist](company-pack/README.md)
-
-## Project documents
-
+## Product documentation
+- [Full feature catalog](docs/FEATURE_CATALOG.md)
 - [Product scope](docs/PRODUCT_SCOPE.md)
 - [Roadmap](docs/ROADMAP.md)
 - [Architecture and security](docs/ARCHITECTURE.md)
-
-## Current implementation status
-
-The repository currently includes an Arabic RTL landing page, email/password signup and login, Supabase SSR cookie handling, auth callback, a protected feed placeholder, and the initial social database migration with RLS policies. Messaging, communities, video publishing, and marketplace flows are planned stages and are not yet implemented.
