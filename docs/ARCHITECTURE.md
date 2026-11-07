@@ -14,12 +14,12 @@
 - Next.js 15.5.29 App Router, React 19, TypeScript.
 - Supabase SSR clients are created separately for browser and server execution.
 - `middleware.ts` refreshes auth claims and session cookies for Next.js 15.
-- Render runs `npm ci && npm run build`, then `npm run start`.
+- Render runs `npm install && npm run build`, then `npm run start`.
 
 ## Required Render environment variables
 
 - `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (or legacy `NEXT_PUBLIC_SUPABASE_ANON_KEY`)
 
 Do not commit real credentials. The Supabase service-role key is intentionally not included in the client setup and must never be exposed to browser code. Add it to Render only if a later server-only administrative operation genuinely requires it.
 
@@ -35,4 +35,4 @@ Do not commit real credentials. The Supabase service-role key is intentionally n
 
 ## Initial implementation
 
-This repository starts with the landing page, email/password signup and login, SSR cookie handling, auth callback, and a protected feed placeholder. The feed, messaging, communities, video, and marketplace are staged features, not yet implemented.
+The repository includes a branded Arabic RTL landing page, email/password signup and login, SSR cookie handling, auth callback, and a protected feed placeholder. The first database migration adds the initial social graph and publishing tables with RLS. Messaging, communities, video, and marketplace remain staged features, not yet implemented.
