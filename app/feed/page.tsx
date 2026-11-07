@@ -1,23 +1,27 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
+import SocialFeed from "@/components/social-feed";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function FeedPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-
   if (!user) redirect("/login");
 
-  return (
-    <main className="auth-wrap">
-      <section className="auth-card">
-        <Link className="brand" href="/"><span className="brand-mark">✦</span>NOVA</Link>
-        <h1>مرحباً بك في NOVA</h1>
-        <p>تم تسجيل الدخول بنجاح باستخدام Supabase.</p>
-        <p>{user.email}</p>
-        <p>واجهة الخلاصة قيد البناء. سنضيف المنشورات والتفاعلات بعد تجهيز قاعدة البيانات وسياسات الخصوصية.</p>
-        <form action="/auth/signout" method="post"><button className="button button-primary full-width" type="submit">تسجيل الخروج</button></form>
-      </section>
-    </main>
-  );
+  const { data: rows } = await supabase.from("posts").select("id, author_id, content, created_at").order("created_at", { ascending: false }).limit(30);
+  const authorIds = [...new Set((rows ?? []).map((post) => post.author_id))];
+  const { data: profiles } = authorIds.length
+    ? await supabase.from("profiles").select("id, display_name, username, avatar_url").in("id", authorIds)
+    : { data: [] };
+  const profileById = new Map((profiles ?? []).map((profile) => [profile.id, profile]));
+  const initialPosts = (rows ?? []).map((post) => ({
+    id: post.id,
+    content: post.content,
+    created_at: post.created_at,
+    author: {
+      display_name: profileById.get(post.author_id)?.display_name ?? "عضو NOVA",
+      username: profileById.get(post.author_id)?.username ?? null,
+      avatar_url: profileById.get(post.author_id)?.avatar_url ?? null,
+    },
+  }));
+  return <SocialFeed initialPosts={initialPosts} />;
 }
